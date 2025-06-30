@@ -67,9 +67,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            color: white;
-            font-weight: bold;
+            
+        }
+        .logo img.logo-image {
+            width: 100%;  /* Adjust between 60–80% as needed */
+            height: 100%;
+            object-fit: contain;
         }
 
         .brand-name {
@@ -327,20 +330,50 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        .transformation-image {
+            position: relative; /* ✅ Needed for absolute positioning inside */
+            left: -11px;   /* ✅ Moves the image slightly left */ 
+            width: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .transformation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%; /* 🔽 lower the center of the image */
+            display: block;
+        }
+
+        .transformation-overlay {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;     /* ⬆️ Makes overlay taller */
+            font-weight: bold;
+            font-size: 1.5rem;   /* Optional: make text a bit larger */
+        }
+
     </style>
 </head>
 <body>
     <div class="page-title">Daru - Transformation Hub</div>
-    <div class="developer-badge">💎 Premium</div>
 
     <header class="header">
         <div class="logo-section">
-            <div class="logo">D</div>
+            <div class="logo">
+                <img src="C:\Users\16505\Daru\daru logo.png" alt="daru logo" class="logo-image">
+            </div>
             <div class="brand-name">Daru</div>
         </div>
         <div class="nav-buttons">
             <a href="LOGIN PAGE.html" class="nav-btn secondary" style="text-decoration: none; display: inline-block; text-align: center;">Login</a>
-            <button class="nav-btn primary">Get Started</button>
+            <button class="nav-btn primary">Get Started</button> <!-- a space for info website -->
         </div>
     </header>
 
@@ -352,14 +385,14 @@
         <div class="transformation-gallery">
             <div class="transformation-card">
                 <div class="transformation-image male-before">
-                    💪
+                    <img src="C:\Users\16505\Daru\male before.jpg" alt="male before"> <!-- This is for the image -->
                     <div class="transformation-overlay">Before</div>
                 </div>
             </div>
             
             <div class="transformation-card">
                 <div class="transformation-image male-after">
-                    🏆
+                    <img src="C:\Users\16505\Daru\male after.jpg" alt="male after">
                     <div class="transformation-overlay">After</div>
                 </div>
             </div>

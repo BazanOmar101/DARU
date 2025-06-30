@@ -56,8 +56,8 @@
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             background: #e74c3c;
             border-radius: 12px;
             margin: 0 auto 20px;
@@ -68,6 +68,11 @@
             font-weight: bold;
             color: white;
             box-shadow: 0 8px 16px rgba(231, 76, 60, 0.3);
+        }
+        .logo img.logo-image {
+            width: 100%;  /* Adjust between 60–80% as needed */
+            height: 100%;
+            object-fit: contain;
         }
 
         .form-row {
@@ -278,7 +283,9 @@
     
     <div class="signup-container">
         <div class="signup-header">
-            <div class="logo">🦉</div>
+            <div class="logo">
+                <img src="C:\Users\16505\Daru\daru logo.png" alt="daru logo" class="logo-image">
+            </div>
             <h1 class="signup-title">Sign Up</h1>
         </div>
 

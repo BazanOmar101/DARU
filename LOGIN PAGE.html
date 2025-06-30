@@ -50,6 +50,7 @@
             font-weight: 600;
             margin-bottom: 20px;
             color: white;
+             margin-left: 120px;
         }
 
         .logo {
@@ -67,6 +68,11 @@
             box-shadow: 0 8px 16px rgba(231, 76, 60, 0.3);
         }
 
+        .logo img.logo-image {
+            width: 100%;  /* Adjust between 60–80% as needed */
+            height: 100%;
+            object-fit: contain;
+        }
         .form-group {
             margin-bottom: 20px;
             position: relative;
@@ -201,8 +207,10 @@
     <div class="page-title">Login Page</div>
     
     <div class="login-container">
-        <div class="login-header">
-            <div class="logo">🦉</div>
+         <div class="logo-section">
+            <div class="logo">
+                <img src="C:\Users\16505\Daru\daru logo.png" alt="daru logo" class="logo-image">
+            </div>
             <h1 class="login-title">Log In</h1>
         </div>
 
