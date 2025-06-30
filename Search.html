@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daru - Search Desktop</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+    .page-title {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 16px;
+      color: #888;
+      font-weight: 300;
+    }
+    .developer-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: #8b5cf6;
+      font-weight: 500;
+    }
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 30px;
+      margin: 60px 30px 0 30px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo {
+      width: 50px;
+      height: 50px;
+      background: #e74c3c;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+      font-weight: bold;
+    }
+    .brand-name {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+    }
+    .nav-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+    }
+    .nav-btn.primary {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+    .nav-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    }
+    .nav-btn.secondary {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6;
+      border: 2px solid rgba(139, 92, 246, 0.2);
+    }
+    .nav-btn.secondary:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: #8b5cf6;
+    }
+
+    /* --- SEARCH SECTION --- */
+    .search-section {
+      margin: 60px auto;
+      background: #eee;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      color: black;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .search-bar input {
+      border: none;
+      width: 100%;
+      font-size: 16px;
+      padding: 10px;
+      outline: none;
+    }
+
+    .search-icon {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
+    .recent-section {
+      margin-top: 25px;
+    }
+
+    .recent-section h3 {
+      margin-bottom: 10px;
+    }
+
+    .recent-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .recent-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 600px) {
+      .search-section {
+        margin: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">Daru - Search Desktop</div>
+  <div class="developer-badge">💎 Premium</div>
+
+  <header class="header">
+    <div class="logo-section">
+      <div class="logo">D</div>
+      <div class="brand-name">Daru</div>
+    </div>
+    <div class="nav-buttons">
+        <button class="nav-btn secondary" onclick="window.location.href='YOUR ACCOUNT.html'">My Account</button>
+        <button class="nav-btn secondary" onclick="window.location.href='MAKE A POST.html'">Make Post</button>
+    </div>
+  </header>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search for something..." />
+    </div>
+
+    <div class="recent-section">
+      <h3>Recently Searched</h3>
+      <ul id="recentList" class="recent-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('searchInput');
+    const recentList = document.getElementById('recentList');
+    let recentSearches = [];
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && input.value.trim()) {
+        const query = input.value.trim();
+        if (!recentSearches.includes(query)) {
+          recentSearches.unshift(query);
+          if (recentSearches.length > 5) {
+            recentSearches.pop();
+          }
+          updateRecentList();
+        }
+        input.value = '';
+      }
+    });
+
+    function updateRecentList() {
+      recentList.innerHTML = '';
+      recentSearches.forEach(term => {
+        const li = document.createElement('li');
+        li.textContent = term;
+        recentList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>

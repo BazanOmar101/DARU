@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2a2a2a;
+            color: #333;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        .header {
+            background-color: #4a4a4a;
+            padding: 8px 20px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #e8e8e8, #f5f5f5);
+            border-radius: 12px 12px 0 0;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 0;
+        }
+
+        body.dark-mode .profile-header {
+            background: linear-gradient(135deg, #3a3a3a, #2e2e2e);
+        }
+
+        .profile-title {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #333;
+            letter-spacing: -1px;
+        }
+
+        body.dark-mode .profile-title {
+            color: #e0e0e0;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5FBF, #6B46C1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #7C3AED, #5B21B6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 95, 191, 0.3);
+        }
+
+        .profile-content {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 0 0 12px 12px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .profile-content {
+            background: linear-gradient(135deg, #2a2a2a, #333333);
+        }
+
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .avatar-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        .camera-icon {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .camera-icon:hover {
+            transform: scale(1.1);
+            background: #f0f0f0;
+        }
+
+        body.dark-mode .camera-icon {
+            background: #444;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .camera-icon:hover {
+            background: #555;
+        }
+
+        .form-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        body.dark-mode .form-label {
+            color: #ccc;
+        }
+
+        .form-input {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8B5FBF;
+            box-shadow: 0 0 0 3px rgba(139, 95, 191, 0.1);
+            transform: translateY(-2px);
+        }
+
+        body.dark-mode .form-input {
+            background: #444;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .form-input:focus {
+            border-color: #8B5FBF;
+            background: #4a4a4a;
+        }
+
+        .bio-input {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .dark-mode-section {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dark-mode-label {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #8B5FBF, #6B46C1);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .logout-section {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #8B5FBF, #6B46C1);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #7C3AED, #5B21B6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 95, 191, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px;
+            }
+            
+            .form-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .profile-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Your Account</div>
+    
+    <div class="main-container">
+        <div class="profile-header">
+            <h1 class="profile-title">Profile</h1>
+            <div class="header-buttons">
+                <button class="btn btn-primary" onclick="window.location.href='Search.html'">Search</button>
+                <button class="btn btn-primary" onclick="window.location.href='MAIN PAGE LOGGED IN.html'">Main Page</button>
+            </div>
+        </div>
+        
+        <div class="profile-content">
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <div class="avatar">🦉</div>
+                    <div class="camera-icon">📷</div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-input" placeholder="Enter first name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-input" placeholder="Enter last name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="Enter email address">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" placeholder="Enter username">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-input bio-input" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                
+                <div class="dark-mode-section">
+                    <label class="dark-mode-label">Dark Mode</label>
+                    <div class="toggle-switch" onclick="toggleDarkMode()">
+                        <div class="toggle-slider">☀️</div>
+                    </div>
+                </div>
+                
+                <div class="logout-section">
+                    <button class="btn btn-logout" onclick="window.location.href='LOGIN PAGE.html'">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            const toggle = document.querySelector('.toggle-switch');
+            const slider = document.querySelector('.toggle-slider');
+            
+            body.classList.toggle('dark-mode');
+            toggle.classList.toggle('active');
+            
+            if (body.classList.contains('dark-mode')) {
+                slider.textContent = '🌙';
+            } else {
+                slider.textContent = '☀️';
+            }
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                alert('Logged out successfully!');
+                // In a real app, this would redirect to login page
+            }
+        }
+        
+        // Add some interactive effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Camera icon click effect
+        document.querySelector('.camera-icon').addEventListener('click', () => {
+            alert('Photo upload feature would be implemented here!');
+        });
+        
+        // Header button interactions
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.textContent === 'Search') {
+                    alert('Search functionality would be implemented here!');
+                } else if (e.target.textContent === 'Main Page') {
+                    alert('Navigating to main page...');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

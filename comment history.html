@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment History</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2d2d2d;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #8b5fbf 0%, #6b46c1 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(139, 95, 191, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 95, 191, 0.4);
+        }
+
+        /* Comments Grid */
+        .comments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .comment-card {
+            background: linear-gradient(145deg, #c8c8c8 0%, #b8b8b8 100%);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #8b5fbf;
+        }
+
+        .comment-card.selected {
+            border-color: #8b5fbf;
+            background: linear-gradient(145deg, #d8d8d8 0%, #c8c8c8 100%);
+            transform: translateY(-3px);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #8b5fbf 0%, #6b46c1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .comment-content {
+            background: rgba(255,255,255,0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .comment-text {
+            color: #333;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .comment-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stats-left {
+            display: flex;
+            gap: 15px;
+        }
+
+        .comment-id {
+            color: #999;
+            font-size: 11px;
+        }
+
+        /* Selected Comment Detail */
+        .selected-detail {
+            background: linear-gradient(145deg, #c8c8c8 0%, #b8b8b8 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .selected-detail.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8b5fbf 0%, #6b46c1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .detail-user-info h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .detail-timestamp {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .detail-content {
+            background: rgba(255,255,255,0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .detail-text {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .detail-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-badge {
+            background: rgba(139, 95, 191, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #8b5fbf;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            background: rgba(220, 38, 127, 0.2);
+            color: #dc2626;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: auto;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(220, 38, 127, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        /* Icons */
+        .icon {
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .comments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Comment History</h1>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="window.location.href='MAIN PAGE LOGGED IN.html'">Main Page</button>
+                <button class="nav-btn" onclick="window.location.href='YOUR ACCOUNT.html'">Account</button>
+            </div>
+        </div>
+
+        <!-- Comments Grid -->
+        <div class="comments-grid" id="commentsGrid">
+            <!-- Comments will be generated by JavaScript -->
+        </div>
+
+        <!-- Selected Comment Detail -->
+        <div class="selected-detail" id="selectedDetail">
+            <div class="detail-header">
+                <div class="detail-avatar" id="detailAvatar"></div>
+                <div class="detail-user-info">
+                    <h3 id="detailUsername"></h3>
+                    <div class="detail-timestamp" id="detailTimestamp"></div>
+                </div>
+            </div>
+            <div class="detail-content">
+                <div class="detail-text" id="detailText"></div>
+            </div>
+            <div class="detail-stats">
+                <div class="stat-badge" id="detailLikes"></div>
+                <div class="stat-badge" id="detailReplies"></div>
+                <button class="close-btn" onclick="closeDetail()">Close</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer" id="footer">
+            <!-- Stats will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        var comments = [
+            {
+                id: 1,
+                username: 'alexjade42',
+                avatar: 'AJ',
+                content: 'The theme is full of inspiration and creativity! The color palette really brings everything together beautifully.',
+                timestamp: '2 hours ago',
+                likes: 12,
+                replies: 3
+            },
+            {
+                id: 2,
+                username: 'designpro',
+                avatar: 'DP',
+                content: 'Amazing work on the layout structure. The typography choices are spot-on and the spacing feels perfect.',
+                timestamp: '4 hours ago',
+                likes: 8,
+                replies: 1
+            },
+            {
+                id: 3,
+                username: 'creative_mind',
+                avatar: 'CM',
+                content: 'Love how you approached the user experience here. The flow feels natural and intuitive to navigate.',
+                timestamp: '6 hours ago',
+                likes: 15,
+                replies: 5
+            },
+            {
+                id: 4,
+                username: 'webmaster99',
+                avatar: 'WM',
+                content: 'The attention to detail in the micro-interactions is incredible. Really elevates the whole experience.',
+                timestamp: '8 hours ago',
+                likes: 20,
+                replies: 7
+            },
+            {
+                id: 5,
+                username: 'ux_explorer',
+                avatar: 'UX',
+                content: 'Brilliant implementation of the design system. The consistency across all components is remarkable.',
+                timestamp: '10 hours ago',
+                likes: 6,
+                replies: 2
+            },
+            {
+                id: 6,
+                username: 'pixel_perfect',
+                avatar: 'PP',
+                content: 'The responsive design works flawlessly across all devices. Great job on the mobile optimization!',
+                timestamp: '12 hours ago',
+                likes: 11,
+                replies: 4
+            },
+            {
+                id: 7,
+                username: 'code_ninja',
+                avatar: 'CN',
+                content: 'Clean code architecture and excellent performance optimization. The loading times are impressive.',
+                timestamp: '14 hours ago',
+                likes: 9,
+                replies: 3
+            },
+            {
+                id: 8,
+                username: 'design_guru',
+                avatar: 'DG',
+                content: 'The visual hierarchy guides the eye perfectly through the interface. Masterful use of white space.',
+                timestamp: '16 hours ago',
+                likes: 14,
+                replies: 6
+            },
+            {
+                id: 9,
+                username: 'frontend_dev',
+                avatar: 'FD',
+                content: 'Impressive accessibility features and semantic HTML structure. This sets a great standard.',
+                timestamp: '18 hours ago',
+                likes: 7,
+                replies: 2
+            }
+        ];
+
+        let selectedComment = null;
+
+        function generateComments() {
+            var grid = document.getElementById('commentsGrid');
+            grid.innerHTML = '';
+
+            for (var i = 0; i < comments.length; i++) {
+                var comment = comments[i];
+                var card = document.createElement('div');
+                card.className = 'comment-card';
+                card.onclick = function(c) {
+                    return function() { selectComment(c); };
+                }(comment);
+                
+                card.innerHTML = 
+                    '<div class="user-info">' +
+                        '<div class="avatar">' + comment.avatar + '</div>' +
+                        '<div class="user-details">' +
+                            '<div class="username">' + comment.username + '</div>' +
+                            '<div class="timestamp">' + comment.timestamp + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="comment-content">' +
+                        '<div class="comment-text">' + comment.content + '</div>' +
+                    '</div>' +
+                    '<div class="comment-stats">' +
+                        '<div class="stats-left">' +
+                            '<div class="stat-item">👍 ' + comment.likes + '</div>' +
+                            '<div class="stat-item">💬 ' + comment.replies + '</div>' +
+                        '</div>' +
+                        '<div class="comment-id">#' + comment.id.toString().padStart(3, '0') + '</div>' +
+                    '</div>';
+
+                grid.appendChild(card);
+            }
+
+            updateFooter();
+        }
+
+        function selectComment(comment) {
+            // Remove previous selection
+            var cards = document.querySelectorAll('.comment-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].classList.remove('selected');
+            }
+
+            if (selectedComment && selectedComment.id === comment.id) {
+                selectedComment = null;
+                document.getElementById('selectedDetail').classList.remove('show');
+            } else {
+                selectedComment = comment;
+                
+                // Add selection to clicked card
+                if (window.event && window.event.currentTarget) {
+                    window.event.currentTarget.classList.add('selected');
+                }
+                
+                // Update detail view
+                document.getElementById('detailAvatar').textContent = comment.avatar;
+                document.getElementById('detailUsername').textContent = comment.username;
+                document.getElementById('detailTimestamp').textContent = comment.timestamp;
+                document.getElementById('detailText').textContent = comment.content;
+                document.getElementById('detailLikes').textContent = '👍 ' + comment.likes + ' likes';
+                document.getElementById('detailReplies').textContent = '💬 ' + comment.replies + ' replies';
+                
+                document.getElementById('selectedDetail').classList.add('show');
+            }
+        }
+
+        function closeDetail() {
+            selectedComment = null;
+            document.getElementById('selectedDetail').classList.remove('show');
+            var cards = document.querySelectorAll('.comment-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].classList.remove('selected');
+            }
+        }
+
+        function updateFooter() {
+            var totalInteractions = 0;
+            for (var i = 0; i < comments.length; i++) {
+                totalInteractions += comments[i].likes + comments[i].replies;
+            }
+            document.getElementById('footer').textContent = 
+                'Showing ' + comments.length + ' comments • Total interactions: ' + totalInteractions;
+        }
+
+        // Initialize
+        generateComments();
+    </script>
+</body>
+</html>

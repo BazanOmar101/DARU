@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daru - Make A Post</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #3c3c3c;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .page-title {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 16px;
+            color: #ccc;
+            font-weight: 300;
+        }
+
+        .header {
+            background: #d4d4d4;
+            padding: 20px 40px;
+            margin: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-btn {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #8b5cf6;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .main-container {
+            background: #d4d4d4;
+            margin: 30px;
+            border-radius: 8px;
+            padding: 40px;
+            display: flex;
+            gap: 40px;
+            min-height: 500px;
+        }
+
+        .upload-section {
+            background: #c0c0c0;
+            border-radius: 8px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 280px;
+            text-align: center;
+        }
+
+        .image-preview {
+            width: 180px;
+            height: 180px;
+            background: #e74c3c;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .daruma-icon {
+            font-size: 80px;
+            position: relative;
+        }
+
+        .daruma-face {
+            width: 120px;
+            height: 120px;
+            background: #f4d03f;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .daruma-eyes {
+            display: flex;
+            gap: 20px;
+            position: absolute;
+            top: 35px;
+        }
+
+        .eye {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #333;
+            position: relative;
+        }
+
+        .pupil {
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+        }
+
+        .daruma-mustache {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #333;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-section {
+            flex: 1;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .caption-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #999;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            background: #f0f0f0;
+        }
+
+        .caption-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .form-column {
+            flex: 1;
+        }
+
+        .audience-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #999;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .audience-select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #999;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .upload-btn {
+            padding: 12px 24px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .upload-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                margin: 15px;
+                padding: 20px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                margin: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Make A Post</div>
+
+    <header class="header">
+        <h1>New post</h1>
+        <div class="header-buttons">
+            <button class="header-btn" onclick="window.location.href='Search.html'">Search</button>
+            <button class="header-btn" onclick="window.location.href='MAIN PAGE LOGGED IN.html'">Main Page</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="upload-section">
+            <div class="image-preview">
+                <div class="daruma-face">
+                    <div class="daruma-eyes">
+                        <div class="eye">
+                            <div class="pupil"></div>
+                        </div>
+                        <div class="eye">
+                            <div class="pupil"></div>
+                        </div>
+                    </div>
+                    <div class="daruma-mustache">〜〜〜</div>
+                </div>
+            </div>
+            <div class="upload-text">Upload Image</div>
+            <button class="upload-btn">Choose File</button>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label class="form-label">Caption</label>
+                <textarea class="caption-textarea" placeholder="Write your caption here..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-column">
+                    <label class="form-label">Audience</label>
+                    <select class="audience-select">
+                        <option value="everyone">Everyone</option>
+                        <option value="friends">Friends Only</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+
+                <div class="form-column">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="date-input">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.querySelector('.date-input').valueAsDate = new Date();
+        
+        // File upload functionality
+        document.querySelector('.upload-btn').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.addEventListener('change', function(e) {
+                if (e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.querySelector('.image-preview');
+                        preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            input.click();
+        });
+    </script>
+</body>
+</html>
