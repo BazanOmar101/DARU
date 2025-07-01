@@ -59,7 +59,7 @@
             gap: 15px;
         }
 
-        .logo {
+       .logo {
             width: 50px;
             height: 50px;
             background: #e74c3c;
@@ -67,9 +67,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            color: white;
-            font-weight: bold;
+            
+        }
+        .logo img.logo-image {
+            width: 100%;  /* Adjust between 60–80% as needed */
+            height: 100%;
+            object-fit: contain;
         }
 
         .brand-name {
@@ -78,7 +81,7 @@
             color: #333;
         }
 
-        .nav-buttons {
+         .nav-buttons {
             display: flex;
             gap: 15px;
         }
@@ -192,17 +195,6 @@
 
         .female-after {
             background: linear-gradient(135deg, #ff8a80 0%, #ea80fc 100%);
-        }
-
-        .transformation-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            padding: 20px;
-            color: white;
-            font-weight: 600;
         }
 
         .cta-section {
@@ -327,21 +319,82 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+         .transformation-image {
+            position: relative; /* ✅ Needed for absolute positioning inside */
+            left: -11px;   /* ✅ Moves the image slightly left */ 
+            width: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .transformation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%; /* 🔽 lower the center of the image */
+            display: block;
+        }
+
+        .transformation-overlay {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;     /* ⬆️ Makes overlay taller */
+            font-weight: bold;
+            font-size: 1.5rem;   /* Optional: make text a bit larger */
+        }
+        .nav-btn {
+            /* Base styles */
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5FBF, #6B46C1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #7C3AED, #5B21B6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 95, 191, 0.3);
+        }
     </style>
 </head>
 <body>
     <div class="page-title">Daru - Transformation Hub</div>
-    <div class="developer-badge">💎 Premium</div>
 
     <header class="header">
         <div class="logo-section">
-            <div class="logo">D</div>
+             <div class="logo">
+            <img src="C:\Users\16505\Daru\daru logo.png" alt="daru logo" class="logo-image">
+            </div>
             <div class="brand-name">Daru</div>
         </div>
         <div class="nav-buttons">
-            <button class="nav-btn secondary" onclick="window.location.href='YOUR ACCOUNT.html'">My Account</button>
-            <button class="nav-btn secondary" onclick="window.location.href='MAKE A POST.html'">Make Post</button>
-            <button class="nav-btn primary" onclick="window.location.href='Search.html'">Search</button>
+            <button class="btn btn-primary" onclick="window.location.href='YOUR ACCOUNT.html'">My Account</button>
+            <button class="btn btn-primary" onclick="window.location.href='MAKE A POST.html'">Make Post</button>
+            <button class="btn btn-primary" onclick="window.location.href='Search.html'">Search</button>
         </div>
     </header>
 
@@ -354,28 +407,28 @@
         <div class="transformation-gallery">
             <div class="transformation-card">
                 <div class="transformation-image male-before">
-                    💪
+                    <img src="C:\Users\16505\Daru\male before.jpg" alt="male before"> <!-- This is for the image -->
                     <div class="transformation-overlay">Before</div>
                 </div>
             </div>
             
             <div class="transformation-card">
                 <div class="transformation-image male-after">
-                    🏆
+                    <img src="C:\Users\16505\Daru\male after.jpg" alt="male after">
                     <div class="transformation-overlay">After</div>
                 </div>
             </div>
             
             <div class="transformation-card">
                 <div class="transformation-image female-before">
-                    🌟
+                    <img src="C:\Users\16505\Daru\women before.jpg" alt="women before">
                     <div class="transformation-overlay">Before</div>
                 </div>
             </div>
             
             <div class="transformation-card">
                 <div class="transformation-image female-after">
-                    ✨
+                    <img src="C:\Users\16505\Daru\women after.jpg" alt="women after">
                     <div class="transformation-overlay">After</div>
                 </div>
             </div>

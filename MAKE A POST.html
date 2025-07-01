@@ -115,6 +115,24 @@
             align-items: center;
             justify-content: center;
         }
+        .eyebrow {
+            position: absolute;
+            top: -15px;
+            width: 25px;
+            height: 8px;
+            background: #000;
+            border-radius: 1px;
+        }
+
+        .eyebrow.left {
+            left: -5px;
+            transform: rotate(20deg);
+        }
+
+        .eyebrow.right {
+            right: -5px;
+            transform: rotate(-20deg);
+        }
 
         .daruma-eyes {
             display: flex;
@@ -145,7 +163,7 @@
         .daruma-mustache {
             position: absolute;
             bottom: 25px;
-            left: 50%;
+            left: 55%;
             transform: translateX(-50%);
             font-size: 24px;
             color: #333;
@@ -268,6 +286,24 @@
                 text-align: center;
             }
         }
+        .save-button-container {
+            margin-top: 20px;
+        }
+
+        .save-button {
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .save-button:hover {
+            background-color: #7c3aed;
+        }
     </style>
 </head>
 <body>
@@ -287,13 +323,15 @@
                 <div class="daruma-face">
                     <div class="daruma-eyes">
                         <div class="eye">
+                            <div class="eyebrow left"></div>
                             <div class="pupil"></div>
                         </div>
                         <div class="eye">
+                            <div class="eyebrow right"></div>
                             <div class="pupil"></div>
                         </div>
                     </div>
-                    <div class="daruma-mustache">〜〜〜</div>
+                    <div class="daruma-mustache">___/</div>
                 </div>
             </div>
             <div class="upload-text">Upload Image</div>
@@ -321,6 +359,8 @@
                     <input type="date" class="date-input">
                 </div>
             </div>
+            <div class="save-button-container">
+                <button type="button" class="save-button">Save</button>
         </div>
     </div>
 

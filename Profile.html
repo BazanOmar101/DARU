@@ -273,10 +273,11 @@
             transform: translateX(30px);
         }
 
-        .logout-section {
+        .button-section {
             grid-column: 1 / -1;
             display: flex;
             justify-content: flex-end;
+            gap: 15px;
             margin-top: 30px;
         }
 
@@ -293,6 +294,8 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(139, 95, 191, 0.3);
         }
+
+        
 
         @media (max-width: 768px) {
             .profile-content {
@@ -358,7 +361,8 @@
                             <div class="toggle-slider">☀️</div>
                         </div>
                     </div>
-                    <div class="logout-section">
+                    <div class="button-section">
+                        <button class="btn btn-logout">Save</button>
                         <button class="btn btn-logout" onclick="window.location.href='LOGIN PAGE.html'">Log Out</button>
                     </div>
                 </div>
@@ -412,16 +416,6 @@
             alert('Photo upload feature would be implemented here!');
         });
         
-        // Header button interactions
-        document.querySelectorAll('.btn-primary').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (e.target.textContent === 'Search') {
-                    alert('Search functionality would be implemented here!');
-                } else if (e.target.textContent === 'Main Page') {
-                    alert('Navigating to main page...');
-                }
-            });
-        });
     </script>
 </body>
 </html>
