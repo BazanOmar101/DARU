@@ -4,6 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up Page</title>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAM1v-d2HOg7vQcURgSnc0OgNlzD9iGA3M",
+            authDomain: "daru-101.firebaseapp.com",
+            projectId: "daru-101",
+            storageBucket: "daru-101.firebasestorage.app",
+            messagingSenderId: "816810320957",
+            appId: "1:816810320957:web:811eb90eaa3cefc00db654",
+            measurementId: "G-H20FMMBKG8"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Make Firebase available globally
+        window.firebaseAuth = auth;
+        window.firebaseDB = db;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.updateProfile = updateProfile;
+        window.setDoc = setDoc;
+        window.doc = doc;
+    </script>
     <style>
         * {
             margin: 0;
@@ -56,22 +86,11 @@
         }
 
         .logo {
-            width: 75px;
-            height: 75px;
-            background: #e74c3c;
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
             margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 8px 16px rgba(231, 76, 60, 0.3);
-        }
-        .logo img.logo-image {
-            width: 100%;  /* Adjust between 60–80% as needed */
-            height: 100%;
+            display: block;
+            border-radius: 8px;
             object-fit: contain;
         }
 
@@ -265,6 +284,11 @@
             display: none;
         }
 
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
         @media (max-width: 480px) {
             .signup-container {
                 width: 90%;
@@ -283,9 +307,7 @@
     
     <div class="signup-container">
         <div class="signup-header">
-            <div class="logo">
-                <img src="C:\Users\16505\Daru\daru logo.png" alt="daru logo" class="logo-image">
-            </div>
+            <img src="https://i.imgur.com/r1oRxJb.png" alt="daru logo" class="logo">
             <h1 class="signup-title">Sign Up</h1>
         </div>
 
@@ -513,34 +535,118 @@
             }
         }
 
-        // Form submission
-        const signupForm = document.getElementById('signupForm');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
+        // Function to show error message
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
 
-        signupForm.addEventListener('submit', function(e) {
+        // Function to show success message
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Firebase account creation function
+        async function createFirebaseAccount(email, password, firstName, lastName, username) {
+            try {
+                // Create user with email and password
+                const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                const user = userCredential.user;
+
+                // Update user profile with display name
+                await window.updateProfile(user, {
+                    displayName: `${firstName} ${lastName}`
+                });
+
+                // Save additional user info to Firestore
+                await window.setDoc(window.doc(window.firebaseDB, 'users', user.uid), {
+                    firstName: firstName,
+                    lastName: lastName,
+                    username: username,
+                    email: email,
+                    createdAt: new Date(),
+                    newsletter: document.getElementById('newsletter').checked
+                });
+
+                return { success: true, user: user };
+            } catch (error) {
+                return { success: false, error: error };
+            }
+        }
+
+        // Form submission with Firebase integration
+        const signupForm = document.getElementById('signupForm');
+
+        signupForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
+            // Hide previous messages
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
 
-            // Simulate account creation
-            setTimeout(() => {
-                successMessage.style.display = 'block';
-                signupForm.reset();
-                document.getElementById('submitBtn').disabled = true;
-                
-                // Clear validation classes
-                document.querySelectorAll('.form-input').forEach(input => {
-                    input.classList.remove('valid', 'invalid');
-                });
-                
-                // Hide password requirements
-                passwordRequirements.classList.remove('show');
-                document.querySelectorAll('.requirement').forEach(req => {
-                    req.classList.remove('met');
-                });
-            }, 500);
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+            document.querySelector('.signup-container').classList.add('loading');
+
+            // Get form data
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('username').value;
+
+            try {
+                // Create Firebase account
+                const result = await createFirebaseAccount(email, password, firstName, lastName, username);
+
+                if (result.success) {
+                    showSuccess('Account created successfully! You can now log in.');
+                    signupForm.reset();
+                    
+                    // Clear validation classes
+                    document.querySelectorAll('.form-input').forEach(input => {
+                        input.classList.remove('valid', 'invalid');
+                    });
+                    
+                    // Hide password requirements
+                    passwordRequirements.classList.remove('show');
+                    document.querySelectorAll('.requirement').forEach(req => {
+                        req.classList.remove('met');
+                    });
+                } else {
+                    // Handle Firebase errors
+                    let errorMessage = 'An error occurred while creating your account.';
+                    
+                    if (result.error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'An account with this email already exists.';
+                    } else if (result.error.code === 'auth/weak-password') {
+                        errorMessage = 'Password is too weak. Please choose a stronger password.';
+                    } else if (result.error.code === 'auth/invalid-email') {
+                        errorMessage = 'Please enter a valid email address.';
+                    } else if (result.error.code === 'auth/network-request-failed') {
+                        errorMessage = 'Network error. Please check your connection and try again.';
+                    }
+                    
+                    showError(errorMessage);
+                    console.error('Firebase error:', result.error);
+                }
+            } catch (error) {
+                showError('An unexpected error occurred. Please try again.');
+                console.error('Unexpected error:', error);
+            } finally {
+                // Reset loading state
+                submitBtn.textContent = originalText;
+                document.querySelector('.signup-container').classList.remove('loading');
+                validateForm(); // Re-enable button if form is still valid
+            }
         });
 
         // Navigation buttons
@@ -550,7 +656,7 @@
 
         document.getElementById('loginLink').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Would navigate to login page');
+            window.location.href = 'LOGIN PAGE.html'; // Replace with your actual login page URL
         });
 
         // Terms and privacy links
@@ -579,6 +685,7 @@
         // Initial form validation
         document.getElementById('terms').addEventListener('change', validateForm);
         validateForm();
+
     </script>
 </body>
 </html>
