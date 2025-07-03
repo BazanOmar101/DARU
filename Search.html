@@ -89,11 +89,14 @@
       background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
       color: white;
       box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+      transition: all 0.3s ease;
     }
     .nav-btn.primary:hover {
+      background: linear-gradient(135deg, #9f7aea 0%, #6d28d9 100%);
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
     }
+
     .nav-btn.secondary {
       background: rgba(139, 92, 246, 0.1);
       color: #8b5cf6;
@@ -161,6 +164,37 @@
         margin: 30px 20px;
       }
     }
+     .tab-btn {
+        padding: 12px 30px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: white;
+        transition: all 0.3s ease;
+        border-radius: 0;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .tab-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+        background: linear-gradient(135deg, #9f7aea 0%, #6d28d9 100%);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
+    }
+    .tab-btn.share-btn:hover,
+    .tab-btn.share-btn:focus,
+    .tab-btn.share-btn:active {
+        background: linear-gradient(135deg, #9f7aea 0%, #6d28d9 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+        outline: none;
+    }
+
   </style>
 </head>
 <body>
@@ -175,8 +209,8 @@
       <div class="brand-name">Daru</div>
     </div>
     <div class="nav-buttons">
-        <button class="nav-btn secondary" onclick="window.location.href='YOUR ACCOUNT.html'">My Account</button>
-        <button class="nav-btn secondary" onclick="window.location.href='MAKE A POST.html'">Make Post</button>
+        <button class="nav-btn primary" onclick="window.location.href='YOUR ACCOUNT.html'">My Account</button>
+        <button class="nav-btn primary" onclick="window.location.href='MAKE A POST.html'">Make Post</button>
     </div>
   </header>
 

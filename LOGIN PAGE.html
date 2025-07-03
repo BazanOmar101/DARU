@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Login Page - Debug</title>
 
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -34,10 +34,11 @@
         window.onAuthStateChanged = onAuthStateChanged;
         window.getDoc = getDoc;
         window.doc = doc;
+        
+        console.log('Firebase initialized successfully');
     </script>
 
     <style>
-        
         * {
             margin: 0;
             padding: 0;
@@ -236,6 +237,17 @@
             display: none;
         }
 
+        .debug-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            display: none;
+        }
+
         .loading {
             opacity: 0.7;
             pointer-events: none;
@@ -265,7 +277,7 @@
     </style>
 </head>
 <body>
-    <div class="page-title">Login Page</div>
+    <div class="page-title">Login Page - Debug Version</div>
     
     <div class="login-container">
         <div class="logo-section">
@@ -273,6 +285,10 @@
                 <img src="https://i.imgur.com/r1oRxJb.png" alt="daru logo" class="logo-image">
             </div>
             <h1 class="login-title">Log In</h1>
+        </div>
+
+        <div class="debug-info" id="debugInfo">
+            Debug: Checking authentication...
         </div>
 
         <div class="success-message" id="successMessage">
@@ -328,12 +344,23 @@
         const loginForm = document.getElementById('loginForm');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
+        const debugInfo = document.getElementById('debugInfo');
         const emailField = document.getElementById('email');
         const loginBtn = document.getElementById('loginBtn');
         const btnText = document.getElementById('btnText');
         const spinner = document.getElementById('spinner');
         const signUpBtn = document.getElementById('signUpBtn');
         const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+        // Debug function
+        function showDebug(message) {
+            console.log('DEBUG:', message);
+            debugInfo.textContent = 'Debug: ' + message;
+            debugInfo.style.display = 'block';
+            setTimeout(() => {
+                debugInfo.style.display = 'none';
+            }, 3000);
+        }
 
         // Password visibility toggle
         togglePassword.addEventListener('click', function() {
@@ -348,20 +375,16 @@
                 const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
                 const user = userCredential.user;
                 
+                setTimeout(() => {
+                    window.location.href = 'MAIN PAGE LOGGED IN.html';
+                }, 2000); // 2 second pause before redirect
                 // Optional: Get additional user data from Firestore
                 try {
                     const userDoc = await window.getDoc(window.doc(window.firebaseDB, 'users', user.uid));
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         console.log('User data:', userData);
-                        // Store user data in sessionStorage for use in other pages
-                        sessionStorage.setItem('userData', JSON.stringify({
-                            uid: user.uid,
-                            email: user.email,
-                            displayName: user.displayName,
-                            ...userData
-                        }));
-                    }
+                    } 
                 } catch (docError) {
                     console.log('Could not fetch user document:', docError);
                 }
@@ -375,29 +398,43 @@
         // Function to show loading state
         function showLoading() {
             loginBtn.disabled = true;
-            btnText.style.display = 'none';
-            spinner.style.display = 'block';
+            btnText.textContent = 'Entering...';
+            btnText.style.display = 'block';
+            spinner.style.display = 'none';
             loginForm.classList.add('loading');
         }
 
         // Function to hide loading state
         function hideLoading() {
             loginBtn.disabled = false;
+            btnText.textContent = 'Enter';
             btnText.style.display = 'block';
             spinner.style.display = 'none';
             loginForm.classList.remove('loading');
+        }
+
+        // Function to reset loading state (for error scenarios)
+        function resetLoadingState() {
+            hideLoading();
         }
 
         // Function to show success and redirect
         function showSuccessAndRedirect() {
             successMessage.style.display = 'block';
             setTimeout(() => {
-                // In a real application, replace this with your actual main page URL
-                window.location.href = 'MAIN PAGE LOGGED IN.html';
-            }, 1500);
+                // Debug: Show what would happen in real scenario
+                // In Claude artifacts, we can't actually redirect to external files
+                // In your real environment, this would work:
+                // window.location.href = 'MAIN PAGE LOGGED IN.html';
+                setTimeout(() => {
+                    window.location.href = 'MAIN PAGE LOGGED IN.html';
+                }, 2000); 
+                
+                // For demo purposes, show success message
+            }, 2000);
         }
 
-        // Function to show error message
+        // Function to show error message  
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.style.display = 'block';
@@ -406,7 +443,7 @@
             }, 5000);
         }
 
-        // Form submission handler with Firebase authentication
+        // Form submission handler with Firebase authentication and timeout
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -427,8 +464,16 @@
             showLoading();
 
             try {
-                // Authenticate with Firebase
-                const result = await authenticateUser(email, password);
+                console.log('Attempting to authenticate user...');
+                
+                const result = await Promise.race([
+                    authenticateUser(email, password),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Request timed out')), 30000)
+                    )
+                ]);
+
+                console.log('Authentication result:', result);
 
                 if (result.success) {
                     showSuccessAndRedirect();
@@ -452,18 +497,24 @@
                     
                     showError(errorMessage);
                     passwordField.value = ''; // Clear password field on error
+                    resetLoadingState();
                 }
+
             } catch (error) {
-                showError('An unexpected error occurred. Please try again.');
-                console.error('Login error:', error);
-            } finally {
-                hideLoading();
+                if (error.message === 'Request timed out') {
+                    console.log('Login request timed out');
+                    showError('Request timed out. Please try again.');
+                    resetLoadingState();
+                } else {
+                    showError('An unexpected error occurred. Please try again.');
+                    resetLoadingState();
+                }
             }
         });
 
-        // Prevent Enter button from working without validation
+        // Enhanced Enter key handling
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !loginBtn.disabled) {
                 e.preventDefault();
                 loginForm.dispatchEvent(new Event('submit'));
             }
@@ -471,13 +522,14 @@
 
         // Sign up button navigation
         signUpBtn.addEventListener('click', function() {
-            window.location.href = 'SIGN UP PAGE.html';
+            setTimeout(() => {
+                    window.location.href = 'SIGN UP PAGE.html';
+                }, 50); 
         });
 
         // Forgot password link
         forgotPasswordLink.addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Password reset functionality would be implemented here using Firebase Auth!');
         });
 
         // Add interactive effects to inputs
@@ -495,12 +547,17 @@
         // Check if user is already logged in
         window.onAuthStateChanged(window.firebaseAuth, (user) => {
             if (user) {
-                // User is already signed in, redirect to main page
                 console.log('User already logged in:', user.email);
-                // Uncomment the next line if you want to auto-redirect logged-in users
-                // window.location.href = 'MAIN PAGE LOGGED IN.html';
+                // In your real environment, uncomment this:
+                 window.location.href = 'MAIN PAGE LOGGED IN.html';
+            } else {
             }
         });
+
+        // Test credentials for debugging
+        console.log('=== DEBUG INFO ===');
+        console.log('Firebase Auth object:', window.firebaseAuth);
+        console.log('To test login, you need valid credentials in your Firebase project');
     </script>
 </body>
 </html>
