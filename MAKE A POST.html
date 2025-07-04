@@ -304,10 +304,59 @@
         .save-button:hover {
             background-color: #7c3aed;
         }
+
+        .save-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .auth-info {
+            position: absolute;
+            bottom: 450px;
+            right: 45px;
+            color: #000000;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #8b5cf6;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
     <div class="page-title">Make A Post</div>
+    <div class="auth-info" id="authInfo">Loading user...</div>
 
     <header class="header">
         <h1>New post</h1>
@@ -319,7 +368,7 @@
 
     <div class="main-container">
         <div class="upload-section">
-            <div class="image-preview">
+            <div class="image-preview" id="imagePreview">
                 <div class="daruma-face">
                     <div class="daruma-eyes">
                         <div class="eye">
@@ -335,19 +384,22 @@
                 </div>
             </div>
             <div class="upload-text">Upload Image</div>
-            <button class="upload-btn">Choose File</button>
+            <button class="upload-btn" id="uploadBtn">Choose File</button>
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress" id="progress"></div>
+            </div>
         </div>
 
         <div class="form-section">
             <div class="form-group">
                 <label class="form-label">Caption</label>
-                <textarea class="caption-textarea" placeholder="Write your caption here..."></textarea>
+                <textarea class="caption-textarea" id="caption" placeholder="Write your caption here..."></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-column">
                     <label class="form-label">Audience</label>
-                    <select class="audience-select">
+                    <select class="audience-select" id="audience">
                         <option value="everyone">Everyone</option>
                         <option value="friends">Friends Only</option>
                         <option value="private">Private</option>
@@ -356,35 +408,175 @@
 
                 <div class="form-column">
                     <label class="form-label">Date</label>
-                    <input type="date" class="date-input">
+                    <input type="date" class="date-input" id="postDate">
                 </div>
             </div>
             <div class="save-button-container">
-                <button type="button" class="save-button">Save</button>
+                <button type="button" class="save-button" id="postButton">Post</button>
+                <div class="loading" id="loadingMessage">Uploading post...</div>
+                <div class="error" id="errorMessage"></div>
+                <div class="success" id="successMessage"></div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Mock user for local testing
+        let currentUser = {
+            uid: 'test-user-123',
+            email: 'test@example.com'
+        };
+        let selectedFile = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('authInfo').textContent = `Logged in as: ${currentUser.email}`;
+        });
+
         // Set today's date as default
-        document.querySelector('.date-input').valueAsDate = new Date();
-        
+        document.getElementById('postDate').valueAsDate = new Date();
+
         // File upload functionality
-        document.querySelector('.upload-btn').addEventListener('click', function() {
+        document.getElementById('uploadBtn').addEventListener('click', function() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.addEventListener('change', function(e) {
                 if (e.target.files[0]) {
+                    selectedFile = e.target.files[0];
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        const preview = document.querySelector('.image-preview');
+                        const preview = document.getElementById('imagePreview');
                         preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
                     };
-                    reader.readAsDataURL(e.target.files[0]);
+                    reader.readAsDataURL(selectedFile);
                 }
             });
             input.click();
         });
+
+        // Post creation functionality
+        document.getElementById('postButton').addEventListener('click', async function() {
+            const caption = document.getElementById('caption').value.trim();
+            const audience = document.getElementById('audience').value;
+            const postDate = document.getElementById('postDate').value;
+
+            if (!caption) {
+                showError('Please add a caption');
+                return;
+            }
+
+            if (!selectedFile) {
+                showError('Please select an image');
+                return;
+            }
+
+            await createPost(caption, audience, postDate, selectedFile);
+        });
+
+        async function createPost(caption, audience, postDate, imageFile) {
+            try {
+                showLoading(true);
+                clearMessages();
+
+                // Simulate upload delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Create post data (for now, just log it)
+                const postData = {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    caption: caption,
+                    audience: audience,
+                    postDate: postDate,
+                    imageName: imageFile.name,
+                    imageSize: imageFile.size,
+                    createdAt: new Date().toISOString(),
+                    likes: 0,
+                    comments: []
+                };
+
+                console.log('Post data to save:', postData);
+                
+                showSuccess('Post created successfully! (Check console for data)');
+                
+                // Reset form
+                setTimeout(() => {
+                    resetForm();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error creating post:', error);
+                showError('Failed to create post: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showLoading(show) {
+            const button = document.getElementById('postButton');
+            const loading = document.getElementById('loadingMessage');
+            
+            if (show) {
+                button.disabled = true;
+                button.textContent = 'Posting...';
+                loading.style.display = 'block';
+            } else {
+                button.disabled = false;
+                button.textContent = 'Post';
+                loading.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function resetForm() {
+            document.getElementById('caption').value = '';
+            document.getElementById('audience').value = 'everyone';
+            document.getElementById('postDate').valueAsDate = new Date();
+            selectedFile = null;
+            
+            // Reset image preview
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = `
+                <div class="daruma-face">
+                    <div class="daruma-eyes">
+                        <div class="eye">
+                            <div class="eyebrow left"></div>
+                            <div class="pupil"></div>
+                        </div>
+                        <div class="eye">
+                            <div class="eyebrow right"></div>
+                            <div class="pupil"></div>
+                        </div>
+                    </div>
+                    <div class="daruma-mustache">___/</div>
+                </div>
+            `;
+        }
+
+       
     </script>
 </body>
 </html>
